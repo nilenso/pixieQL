@@ -1,0 +1,143 @@
+Table: matches [This represents a single match in IPL]
+Columns:
+  - id: INTEGER
+  - season: TEXT
+  - city: TEXT
+  - date: TEXT
+  - match_type: TEXT
+  - player_of_match: TEXT
+  - venue: TEXT
+  - team1: TEXT
+  - team2: TEXT
+  - toss_winner: TEXT
+  - toss_decision: TEXT
+  - winner: TEXT
+  - result: TEXT
+  - result_margin: REAL
+  - target_runs: REAL
+  - target_overs: REAL
+  - super_over: TEXT
+  - method: TEXT
+  - umpire1: TEXT
+  - umpire2: TEXT
+
+Table: deliveries [This represents a single ball played]
+Columns:
+  - match_id: INTEGER
+  - inning: INTEGER  [ 2 innings per match]
+  - batting_team: TEXT
+  - bowling_team: TEXT
+  - over: INTEGER [Possible values 1 to 20 only as there are max 20 overs in an inning]
+  - ball: INTEGER  [Possible values 1,2,3,4,5,6 only]
+  - batter: TEXT
+  - bowler: TEXT
+  - non_striker: TEXT
+  - batsman_runs: INTEGER [this is runs scored for that ball, for score calculation, we need cumulative sum of this]
+  - extra_runs: INTEGER (0 if no extra runs are given)
+  - total_runs: INTEGER
+  - extras_type: TEXT  (null if no extra_runs are given)
+  - is_wicket: INTEGER  [one if a wicket is taken on a delivery, zero for all others]
+  - player_dismissed: TEXT [name of the player who is out/dimsmissed on this ball]
+  - dismissal_kind: TEXT
+  - fielder: TEXT [Fielder who was involved in dismissing a player]
+
+
+Table: squads [This represents the planned lineup of the teams in every match. Best used to get captain, Vice captain, wicketkeeper for the match info]
+Columns:
+  - MatchID: INTEGER [join key for matches]
+  - PlayerID: TEXT
+  - TeamID: INTEGER
+  - TeamCode: TEXT
+  - TeamName: TEXT
+  - PlayerName: TEXT
+  - PlayerShortName: TEXT
+  - BattingType: TEXT
+  - BowlingProficiency: TEXT
+  - PlayerSkill: TEXT
+  - IsCaptain: BOOLEAN  [1 if player is captain for that match]
+  - IsViceCaptain: BOOLEAN  [1 if player is vice captain for that match]
+  - IsWK: BOOLEAN   [1 if player is wicketkeeper for that match]
+  - IsNonDomestic: BOOLEAN  [1 if the player is not indian/coming from overseas/foreign countries]
+  - PlayingOrder: INTEGER  [DONT use this, as this changes in the real match]
+
+Table: batting_cards [The batting lineup of a team for a particular match.]
+Columns:
+  - MatchID: INTEGER
+  - InningsNo: INTEGER
+  - TeamID: INTEGER
+  - PlayerID: TEXT
+  - PlayerName: TEXT
+  - PlayingOrder: INTEGER (Primary Key)  [PlayingOrder is the sequence in which batsman come onto the field. If only 5 batsman were on the pitch, then it will end at 5]
+  - MatchPlayingOrder: INTEGER
+  - BowlerName: TEXT  [Bowler who bowled the ball the batsman got out on]
+  - OutDesc: TEXT
+  - ShortOutDesc: TEXT
+  - Runs: INTEGER
+  - Balls: INTEGER
+  - DotBalls: INTEGER
+  - DotBallPercentage: REAL
+  - DotBallFrequency: REAL
+  - Ones: INTEGER
+  - Twos: INTEGER
+  - Threes: INTEGER
+  - Fours: INTEGER
+  - Sixes: INTEGER
+  - BoundaryPercentage: REAL
+  - BoundaryFrequency: REAL
+  - StrikeRate: REAL
+  - MinOver: INTEGER
+  - MinStrikerOver: INTEGER
+  - WicketNo: TEXT
+  - AgainstFast: INTEGER
+  - AgainstSpin: INTEGER
+  - AgainstFastPercent: REAL
+  - AgainstSpinPercent: REAL
+  - SourceFile: TEXT
+
+Table: bowling_cards [The bowler lineup of a team for a particular match]
+Columns:
+  - MatchID: INTEGER
+  - InningsNo: INTEGER
+  - TeamID: INTEGER
+  - PlayerID: TEXT
+  - PlayerName: TEXT
+  - PlayerShortName: TEXT
+  - Overs: REAL
+  - Maidens: INTEGER
+  - Runs: INTEGER
+  - Wickets: INTEGER
+  - Wides: INTEGER
+  - NoBalls: INTEGER
+  - Economy: REAL
+  - BowlingOrder: INTEGER (Primary Key) [BowlingOrder is the order in which bowlers have bowled their first over in the match]
+  - TotalLegalBallsBowled: INTEGER
+  - ScoringBalls: INTEGER
+  - DotBalls: INTEGER
+  - DBPercent: REAL
+  - DBFrequency: REAL
+  - Ones: INTEGER
+  - Twos: INTEGER
+  - Threes: INTEGER
+  - Fours: INTEGER
+  - Sixes: INTEGER
+  - BdryPercent: REAL
+  - BdryFreq: REAL
+  - StrikeRate: REAL
+  - FourPercent: REAL
+  - SixPercent: REAL
+  - SourceFile: TEXT
+
+Table: auction_data (sold and unsold players from 2016 to 2025)
+Columns:
+  - Season: INTEGER
+  - PlayerID: TEXT
+  - PlayerName: TEXT
+  - TeamCode: TEXT
+  - TeamName: TEXT
+  - base_price: INTEGER
+  - sold_price: INTEGER [Unit: INR, use lakh/crore while talking about this]
+  - sold: BOOLEAN [1 if player was purchased, but can also be 1 if it was retained]
+  - mtc: BOOLEAN
+  - overseas: BOOLEAN
+  - retained: BOOLEAN  [check this for retained player]
+  - role: TEXT

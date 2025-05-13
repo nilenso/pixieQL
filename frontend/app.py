@@ -49,32 +49,78 @@ st.markdown(
         background-color: #f0f0f0 !important; /* Light gray background */
         border-radius: 15px 15px 15px 0 !important;
     }
-
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-
-# Initialize session state for chat history
+# Initialize session state for chat history, refresh status, and session ID
 if "messages" not in st.session_state:
     st.session_state.messages = []
+if "refresh_status" not in st.session_state:
+    st.session_state.refresh_status = None
+if "session_id" not in st.session_state:
+    st.session_state.session_id = None
 
-# Check API connection
-try:
-    health_response = requests.get(f"{API_URL}/api/health")
-    if health_response.status_code == 200:
-        api_status = "✅ Connected"
-        api_data = health_response.json()
-    else:
-        api_status = "❌ Error"
-        api_data = {"error": health_response.text}
-except Exception as e:
-    api_status = "❌ Unavailable"
-    api_data = {"error": str(e)}
+
+# Function to call the chat API
+def call_chat_api(message):
+    try:
+        # Prepare the request payload
+        payload = {"message": message}
+
+        # Include session_id if available to maintain context
+        if st.session_state.session_id:
+            payload["session_id"] = st.session_state.session_id
+
+        # Call the API
+        response = requests.post(f"{API_URL}/api/chat", json=payload)
+
+        if response.status_code == 200:
+            data = response.json()
+            # Store the session_id for future requests
+            st.session_state.session_id = data["session_id"]
+            return data["response"]
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except Exception as e:
+        return f"Error calling API: {str(e)}"
+
+
+# Function to check API health
+def check_health():
+    try:
+        health_response = requests.get(f"{API_URL}/api/health")
+        if health_response.status_code == 200:
+            st.session_state.refresh_status = "success"
+            return health_response.json()
+        else:
+            st.session_state.refresh_status = "error"
+            return {"error": health_response.text}
+    except Exception as e:
+        st.session_state.refresh_status = "error"
+        return {"error": str(e)}
+
 
 # Page layout
 st.sidebar.title("AI Chat Interface")
+
+# Header with refresh button
+col1, col2 = st.columns([1, 11])
+with col1:
+    if st.button("🔄", help="Check API health"):
+        api_data = check_health()
+        st.experimental_rerun()
+
+# Display refresh status if available
+if st.session_state.refresh_status == "success":
+    st.success("API health check successful!")
+    # Reset status after displaying
+    st.session_state.refresh_status = None
+elif st.session_state.refresh_status == "error":
+    st.error("API health check failed!")
+    # Reset status after displaying
+    st.session_state.refresh_status = None
 
 # Main container
 main_container = st.container()
@@ -97,9 +143,9 @@ with main_container:
             with st.chat_message("user"):
                 st.write(user_input)
 
-        # Simulate assistant response
-        # In a real app, this would involve calling the backend API
-        assistant_response = f"{user_input}"
+        # Call the backend API for a response
+        with st.spinner("Thinking..."):
+            assistant_response = call_chat_api(user_input)
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_response}
         )

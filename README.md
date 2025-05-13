@@ -25,7 +25,7 @@ This project demonstrates a Streamlit frontend interacting with a FastAPI backen
     ```bash
     cd frontend
     uv pip install -r requirements.txt
-    streamlit run app.py
+    uv run streamlit run app.py
     ```
     The frontend application will open in your browser, usually at `http://localhost:8501`.
 
