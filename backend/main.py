@@ -59,23 +59,19 @@ def execute_sql_query(query: str) -> Dict[str, Any]:
     conn = None
     try:
         conn = get_db_connection()
+        # Set connection to read-only mode
         cursor = conn.cursor()
+        cursor.execute("PRAGMA query_only = ON;")
+
+        # Execute the query
         cursor.execute(query)
 
-        # Check if the query is a SELECT query
-        if query.strip().upper().startswith("SELECT"):
-            # Fetch all results
-            rows = cursor.fetchall()
-            # Convert rows to list of dicts
-            results = [dict(row) for row in rows]
-            conn.close()
-            return {"success": True, "data": results}
-        else:
-            # For non-SELECT queries (INSERT, UPDATE, DELETE)
-            conn.commit()
-            affected_rows = cursor.rowcount
-            conn.close()
-            return {"success": True, "affected_rows": affected_rows}
+        # For queries that return data (SELECT, etc.)
+        rows = cursor.fetchall()
+        # Convert rows to list of dicts
+        results = [dict(row) for row in rows]
+        conn.close()
+        return {"success": True, "data": results}
     except Exception as e:
         if conn:
             conn.close()
@@ -230,9 +226,7 @@ async def execute_sql(request: SQLQueryRequest):
                 result_str = "Query executed successfully, but returned no data."
         else:
             # For non-SELECT queries
-            result_str = (
-                f"Query executed successfully. Affected rows: {result['affected_rows']}"
-            )
+            result_str = "Query executed successfully. But no data available"
     else:
         # For errors
         result_str = f"Query execution failed: {result['error']}"
