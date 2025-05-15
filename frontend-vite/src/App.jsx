@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { AgGridReact } from 'ag-grid-react';
+import ReactMarkdown from 'react-markdown';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './App.css';
@@ -98,6 +99,12 @@ function App() {
                 { role: 'assistant', content: 'Query executed successfully, but returned no data.' }
               ]);
             }
+          } else if (data.result && data.result.success === false) {
+            // For failed queries, show the error message in chat
+            setMessages(prevMessages => [
+              ...prevMessages,
+              { role: 'assistant', content: `Query execution failed: ${data.result.error}` }
+            ]);
           }
         }
         
@@ -247,7 +254,7 @@ function App() {
                   key={index} 
                   className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
                 >
-                  {parsedContent.beforeSql}
+                  {parsedContent.beforeSql && <ReactMarkdown>{parsedContent.beforeSql}</ReactMarkdown>}
                   <div className="sql-message">
                     <pre>{parsedContent.sqlQuery}</pre>
                     <button 
@@ -258,7 +265,7 @@ function App() {
                       Execute SQL
                     </button>
                   </div>
-                  {parsedContent.afterSql}
+                  {parsedContent.afterSql && <ReactMarkdown>{parsedContent.afterSql}</ReactMarkdown>}
                 </div>
               );
             } else {
@@ -268,7 +275,7 @@ function App() {
                   key={index} 
                   className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
                 >
-                  {message.content}
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
               );
             }
@@ -302,15 +309,15 @@ function App() {
         </div>
         
         {/* Data grid */}
-        <div className="data-grid-container ag-theme-alpine">
+        <div className="data-grid-container ag-theme-alpine" style={{ height: '400px', width: '100%' }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
-            pagination={true}
-            paginationAutoPageSize={true}
+            pagination={false}
             enableCellTextSelection={true}
             suppressRowClickSelection={true}
             rowSelection="multiple"
+            domLayout="normal"
           />
         </div>
       </div>
