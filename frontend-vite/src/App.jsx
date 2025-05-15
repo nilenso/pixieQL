@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { AgGridReact } from 'ag-grid-react';
 import ReactMarkdown from 'react-markdown';
+import html2canvas from 'html2canvas';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './App.css';
@@ -213,18 +214,87 @@ function App() {
       return () => clearTimeout(timer);
     }
   }, [refreshStatus]);
+  
+  // Function to take a screenshot of the chat history
+  const takeScreenshot = async () => {
+    if (chatDisplayRef.current) {
+      try {
+        // Show a temporary message
+        setRefreshStatus('screenshot');
+        
+        // Save original styling
+        const originalHeight = chatDisplayRef.current.style.height;
+        const originalOverflow = chatDisplayRef.current.style.overflow;
+        const originalMaxHeight = chatDisplayRef.current.style.maxHeight;
+        
+        // Temporarily modify the chat display area to show all content
+        chatDisplayRef.current.style.height = 'auto';
+        chatDisplayRef.current.style.overflow = 'visible';
+        chatDisplayRef.current.style.maxHeight = 'none';
+        
+        // Use html2canvas to capture the entire chat display area
+        const canvas = await html2canvas(chatDisplayRef.current, {
+          scrollY: 0,
+          windowHeight: document.documentElement.offsetHeight,
+          height: chatDisplayRef.current.scrollHeight,
+          onclone: (clonedDoc) => {
+            // Ensure the cloned element has the right dimensions
+            const clonedChat = clonedDoc.querySelector('.chat-display-area');
+            if (clonedChat) {
+              clonedChat.style.height = 'auto';
+              clonedChat.style.overflow = 'visible';
+              clonedChat.style.maxHeight = 'none';
+            }
+          }
+        });
+        
+        // Restore original styling
+        chatDisplayRef.current.style.height = originalHeight;
+        chatDisplayRef.current.style.overflow = originalOverflow;
+        chatDisplayRef.current.style.maxHeight = originalMaxHeight;
+        
+        // Convert canvas to a data URL
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `chat-history-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
+        
+        // Trigger the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        setRefreshStatus('success');
+      } catch (error) {
+        console.error('Error taking screenshot:', error);
+        setRefreshStatus('error');
+      }
+    }
+  };
 
   return (
     <div className="App">
-      {/* Header with refresh button */}
+      {/* Header with refresh and screenshot buttons */}
       <div className="header">
-        <button 
-          className="refresh-button" 
-          onClick={checkHealth} 
-          title="Check API health"
-        >
-          🔄
-        </button>
+        <div className="header-buttons">
+          <button 
+            className="refresh-button" 
+            onClick={checkHealth} 
+            title="Check API health"
+          >
+            🔄
+          </button>
+          <button 
+            className="screenshot-button" 
+            onClick={takeScreenshot} 
+            title="Take a screenshot of chat history"
+          >
+            📷
+          </button>
+        </div>
         
         {refreshStatus === 'success' && (
           <div className="status-message status-success">
@@ -235,6 +305,12 @@ function App() {
         {refreshStatus === 'error' && (
           <div className="status-message status-error">
             API health check failed!
+          </div>
+        )}
+        
+        {refreshStatus === 'screenshot' && (
+          <div className="status-message status-success">
+            Taking screenshot...
           </div>
         )}
       </div>

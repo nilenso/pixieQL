@@ -14,12 +14,22 @@
   border-bottom: 1px solid #e9ecef;
 }
 
-.refresh-button {
+.header-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.refresh-button, .screenshot-button {
   background: none;
   border: none;
   font-size: 18px;
   cursor: pointer;
   margin-right: 10px;
+  transition: transform 0.2s;
+}
+
+.refresh-button:hover, .screenshot-button:hover {
+  transform: scale(1.1);
 }
 
 .status-message {
