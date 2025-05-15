@@ -1,11 +1,12 @@
-# Streamlit Frontend with FastAPI Backend
+# PixieQL
 
-This project demonstrates a Streamlit frontend interacting with a FastAPI backend.
+This project demonstrates an iterative way to build SQL queries
 
 ## Prerequisites
 
 - Python 3.8+
 - `uv` (for package management)
+- Node.js and npm (for the frontend)
 ### Installing uv
 https://docs.astral.sh/uv/getting-started/installation/
 
@@ -20,11 +21,11 @@ python run.py
 ```
 
 This script:
-1. Checks if `uv` is installed, exits if its not.
+1. Checks if `uv` and `npm` are installed, exits if either is not available
 2. Installs dependencies for both backend and frontend
 3. Starts the FastAPI backend server
 4. Waits for the backend to initialize
-5. Starts the Streamlit frontend application
+5. Starts the Vite React frontend development server
 
 ### Method 2: Manual Setup (Separate Terminals)
 
@@ -38,15 +39,15 @@ This script:
     ```
     The backend server will be running at `http://localhost:8000`.
 
-2.  **Start the Streamlit Frontend:**
+2.  **Start the Vite React Frontend:**
 
-    Open another terminal, navigate to the `frontend` directory, install dependencies, and run the Streamlit app:
+    Open another terminal, navigate to the `frontend-vite` directory, install dependencies, and run the development server:
     ```bash
-    cd frontend
-    uv pip install -r requirements.txt
-    uv run streamlit run app.py
+    cd frontend-vite
+    npm install
+    npm run dev
     ```
-    The frontend application will open in your browser, usually at `http://localhost:8501`.
+    The frontend application will be available in your browser, usually at `http://localhost:5173`.
 
 
 

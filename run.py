@@ -11,13 +11,22 @@ from pathlib import Path
 # Define paths
 ROOT_DIR = Path(__file__).parent.absolute()
 BACKEND_DIR = ROOT_DIR / "backend"
-FRONTEND_DIR = ROOT_DIR / "frontend"
+FRONTEND_DIR = ROOT_DIR / "frontend-vite"
 
 
 def check_uv_installed():
     """Check if uv is installed."""
     try:
         subprocess.run(["uv", "--version"], capture_output=True, check=True)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
+
+def check_npm_installed():
+    """Check if npm is installed."""
+    try:
+        subprocess.run(["npm", "--version"], capture_output=True, check=True)
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
         return False
@@ -38,7 +47,7 @@ def install_dependencies():
     print("Installing frontend dependencies...")
     # Don't capture stdout/stderr to allow output to be visible in the terminal
     subprocess.run(
-        ["uv", "pip", "install", "-r", "requirements.txt"],
+        ["npm", "install"],
         cwd=FRONTEND_DIR,
         check=True,
         stdout=None,
@@ -63,7 +72,7 @@ def start_frontend():
     print("Starting frontend application...")
     # Don't capture stdout/stderr to allow output to be visible in the terminal
     subprocess.run(
-        ["uv", "run", "streamlit", "run", "app.py"],
+        ["npm", "run", "dev"],
         cwd=FRONTEND_DIR,
         check=True,
         stdout=None,
@@ -77,6 +86,12 @@ def main():
     if not check_uv_installed():
         print("Error: 'uv' is not installed. Please install it first.")
         print("You can install it with: pip install uv")
+        sys.exit(1)
+
+    # Check if npm is installed
+    if not check_npm_installed():
+        print("Error: 'npm' is not installed. Please install it first.")
+        print("You can install it from: https://nodejs.org/")
         sys.exit(1)
 
     # Install dependencies
