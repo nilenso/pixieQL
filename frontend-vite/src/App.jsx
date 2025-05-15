@@ -16,26 +16,112 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Sample data for the grid (can be replaced with actual data)
-  const [rowData, setRowData] = useState([
-    { ID: 1, Name: 'Item A', Value: 100, Status: 'Active' },
-    { ID: 2, Name: 'Item B', Value: 200, Status: 'Inactive' },
-    { ID: 3, Name: 'Item C', Value: 150, Status: 'Active' },
-    { ID: 4, Name: 'Item D', Value: 300, Status: 'Active' },
-    { ID: 5, Name: 'Item E', Value: 250, Status: 'Inactive' }
-  ]);
-
-  // Column definitions for AG Grid
-  const [columnDefs] = useState([
-    { field: 'ID', sortable: true, filter: true, checkboxSelection: true },
-    { field: 'Name', sortable: true, filter: true },
-    { field: 'Value', sortable: true, filter: true },
-    { field: 'Status', sortable: true, filter: true }
-  ]);
+  // State for grid data
+  const [rowData, setRowData] = useState([]);
+  const [columnDefs, setColumnDefs] = useState([]);
 
   // Ref for chat display area to auto-scroll to bottom
   const chatDisplayRef = useRef(null);
 
+  // Function to parse SQL code blocks
+  const parseMessageContent = (content) => {
+    // Check if the content contains SQL code block
+    const sqlRegex = /```sql\s+([\s\S]*?)```/g;
+    const match = sqlRegex.exec(content);
+    
+    if (match) {
+      // Extract the SQL query
+      const sqlQuery = match[1].trim();
+      // Split content into parts: before SQL, SQL, after SQL
+      const parts = content.split(sqlRegex);
+      
+      return {
+        hasSql: true,
+        beforeSql: parts[0],
+        sqlQuery: sqlQuery,
+        afterSql: parts[parts.length - 1]
+      };
+    }
+    
+    return { hasSql: false, content };
+  };
+  
+  // Function to execute SQL query
+  const executeSqlQuery = async (query) => {
+    try {
+      setIsLoading(true);
+      
+      // Prepare the request payload
+      const payload = { 
+        query,
+        session_id: sessionId
+      };
+      
+      // Call the API
+      const response = await axios.post(`${API_URL}/api/sql`, payload);
+      
+      if (response.status === 200) {
+        const data = response.data;
+        
+        // Check if the result has data
+        if (data.result && data.result.success && data.result.data && data.result.data.length > 0) {
+          // Get the first row to determine columns
+          const firstRow = data.result.data[0];
+          
+          // Create column definitions from the keys of the first row
+          const newColumnDefs = Object.keys(firstRow).map(key => ({
+            field: key,
+            sortable: true,
+            filter: true
+          }));
+          
+          // Update the grid data
+          setColumnDefs(newColumnDefs);
+          setRowData(data.result.data);
+        } else {
+          // Clear the grid if no data
+          setColumnDefs([]);
+          setRowData([]);
+          
+          // Show a message about the result
+          if (data.result && data.result.success) {
+            if (data.result.affected_rows !== undefined) {
+              // For non-SELECT queries
+              setMessages(prevMessages => [
+                ...prevMessages,
+                { role: 'assistant', content: `Query executed successfully. Affected rows: ${data.result.affected_rows}` }
+              ]);
+            } else {
+              // For SELECT queries with no results
+              setMessages(prevMessages => [
+                ...prevMessages,
+                { role: 'assistant', content: 'Query executed successfully, but returned no data.' }
+              ]);
+            }
+          }
+        }
+        
+        return data;
+      } else {
+        // Show error message
+        setMessages(prevMessages => [
+          ...prevMessages,
+          { role: 'assistant', content: `Error: ${response.status} - ${response.statusText}` }
+        ]);
+        return `Error: ${response.status} - ${response.statusText}`;
+      }
+    } catch (error) {
+      // Show error message
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { role: 'assistant', content: `Error executing SQL: ${error.message}` }
+      ]);
+      return { error: error.message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   // Function to call the chat API
   const callChatApi = async (message) => {
     try {
@@ -150,14 +236,43 @@ function App() {
       <div className="main-container">
         {/* Chat display area */}
         <div className="chat-display-area" ref={chatDisplayRef}>
-          {messages.map((message, index) => (
-            <div 
-              key={index} 
-              className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
-            >
-              {message.content}
-            </div>
-          ))}
+          {messages.map((message, index) => {
+            // Parse message content to check for SQL code blocks
+            const parsedContent = parseMessageContent(message.content);
+            
+            if (parsedContent.hasSql) {
+              // Render message with SQL code block
+              return (
+                <div 
+                  key={index} 
+                  className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+                >
+                  {parsedContent.beforeSql}
+                  <div className="sql-message">
+                    <pre>{parsedContent.sqlQuery}</pre>
+                    <button 
+                      className="execute-sql-button"
+                      onClick={() => executeSqlQuery(parsedContent.sqlQuery)}
+                      disabled={isLoading}
+                    >
+                      Execute SQL
+                    </button>
+                  </div>
+                  {parsedContent.afterSql}
+                </div>
+              );
+            } else {
+              // Render regular message
+              return (
+                <div 
+                  key={index} 
+                  className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+                >
+                  {message.content}
+                </div>
+              );
+            }
+          })}
         </div>
         
         {/* Chat input */}

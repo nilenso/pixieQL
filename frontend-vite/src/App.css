@@ -123,6 +123,47 @@
   border-radius: 15px 15px 15px 0;
 }
 
+/* SQL message styling */
+.sql-message {
+  background-color: #282c34;
+  color: #f8f8f2;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  position: relative;
+}
+
+.sql-message pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  padding-bottom: 40px; /* Space for the button */
+}
+
+.execute-sql-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.execute-sql-button:hover {
+  background-color: #45a049;
+}
+
+.execute-sql-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 /* Spinner for loading state */
 .spinner {
   display: inline-block;
