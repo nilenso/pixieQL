@@ -335,11 +335,25 @@ function App() {
                   className={`chat-message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
                 >
                   {parsedContent.beforeSql && <ReactMarkdown>{parsedContent.beforeSql}</ReactMarkdown>}
-                  <div className="sql-message">
-                    <pre>{parsedContent.sqlQuery}</pre>
+                  <div 
+                    className="sql-message" 
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                    id={`sql-query-${index}`}
+                  >
+                    {parsedContent.sqlQuery}
                     <button 
                       className="execute-sql-button"
-                      onClick={() => executeSqlQuery(parsedContent.sqlQuery)}
+                      onClick={(e) => {
+                        // Get the parent div (sql-message)
+                        const sqlMessageDiv = e.target.parentNode;
+                        // Get the text content without the button text
+                        const buttonText = e.target.textContent;
+                        let editedQuery = sqlMessageDiv.textContent;
+                        // Remove the button text from the content
+                        editedQuery = editedQuery.replace(buttonText, '').trim();
+                        executeSqlQuery(editedQuery);
+                      }}
                       disabled={isLoading}
                     >
                       Execute SQL
