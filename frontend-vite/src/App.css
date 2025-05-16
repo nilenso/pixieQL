@@ -133,6 +133,12 @@
   border-radius: 15px 15px 15px 0;
 }
 
+/* Remove margin from paragraphs inside chat messages */
+.chat-message p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* SQL message styling */
 .sql-message {
   background-color: #282c34;

@@ -17,7 +17,13 @@ from langchain_community.chat_models import (
     ChatOpenAI,
 )
 from langchain_google_genai import ChatGoogleGenerativeAI
-from models import ChatRequest, ChatResponse, SQLQueryRequest, SQLQueryResponse
+from models import (
+    ChatRequest,
+    ChatResponse,
+    SessionIdResponse,
+    SQLQueryRequest,
+    SQLQueryResponse,
+)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -109,6 +115,12 @@ def generate_session_id() -> str:
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "version": "0.1.0"}
+
+
+@app.get("/api/generate_session_id", response_model=SessionIdResponse)
+async def get_session_id():
+    """Generate and return a new session ID."""
+    return SessionIdResponse(session_id=generate_session_id())
 
 
 @app.post("/api/chat", response_model=ChatResponse)

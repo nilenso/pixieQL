@@ -161,16 +161,20 @@ function App() {
     }
   };
   
-  // Function to check API health
-  const checkHealth = async () => {
+  // Function to generate a session ID and clear chat history
+  const generateSessionId = async () => {
     try {
-      const healthResponse = await axios.get(`${API_URL}/api/health`);
-      if (healthResponse.status === 200) {
+      const response = await axios.get(`${API_URL}/api/generate_session_id`);
+      if (response.status === 200) {
+        setSessionId(response.data.session_id);
+        setMessages([]); // Clear chat history
+        setRowData([]); // Clear grid data
+        setColumnDefs([]); // Clear grid columns
         setRefreshStatus('success');
-        return healthResponse.data;
+        return response.data;
       } else {
         setRefreshStatus('error');
-        return { error: healthResponse.statusText };
+        return { error: response.statusText };
       }
     } catch (error) {
       setRefreshStatus('error');
@@ -282,8 +286,8 @@ function App() {
         <div className="header-buttons">
           <button 
             className="refresh-button" 
-            onClick={checkHealth} 
-            title="Check API health"
+            onClick={generateSessionId} 
+            title="Refresh session"
           >
             🔄
           </button>
@@ -298,13 +302,13 @@ function App() {
         
         {refreshStatus === 'success' && (
           <div className="status-message status-success">
-            API health check successful!
+            New session ID generated!
           </div>
         )}
         
         {refreshStatus === 'error' && (
           <div className="status-message status-error">
-            API health check failed!
+            Failed to generate session ID!
           </div>
         )}
         

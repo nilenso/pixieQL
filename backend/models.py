@@ -33,3 +33,7 @@ class SQLQueryResponse(BaseModel):
     result: Any  # Can be a list of records or an error message
     query: str
     session_id: str
+
+
+class SessionIdResponse(BaseModel):
+    session_id: str
