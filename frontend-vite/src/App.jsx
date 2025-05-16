@@ -23,6 +23,11 @@ function App() {
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
   
+  // State for theme
+  const [isDarkMode, setIsDarkMode] = useState(
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+  
   // Sample data for table grids
   const [tableData1] = useState([
     { player: 'Virat Kohli', team: 'RCB', runs: 973, average: 81.08, strike_rate: 152.03 },
@@ -58,6 +63,9 @@ function App() {
 
   // Ref for chat display area to auto-scroll to bottom
   const chatDisplayRef = useRef(null);
+
+  // Computed theme class name
+  const gridThemeClass = isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
 
   // Function to parse SQL code blocks
   const parseMessageContent = (content) => {
@@ -254,6 +262,23 @@ function App() {
     }
   }, [refreshStatus]);
   
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e) => {
+      setIsDarkMode(e.matches);
+    };
+    
+    // Add event listener
+    mediaQuery.addEventListener('change', handleChange);
+    
+    // Clean up
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+  
   // Function to take a screenshot of the chat history
   const takeScreenshot = async () => {
     if (chatDisplayRef.current) {
@@ -361,7 +386,7 @@ function App() {
           <div className="tables-container">
             {/* This will contain multiple data grids */}
             <h4>Top Batsmen</h4>
-            <div className="table-grid-container ag-theme-alpine">
+            <div className={`table-grid-container ${gridThemeClass}`}>
               <AgGridReact
                 rowData={tableData1}
                 columnDefs={tableCols1}
@@ -385,7 +410,7 @@ function App() {
               />
             </div>
             <h4>Top Bowlers</h4>
-            <div className="table-grid-container ag-theme-alpine">
+            <div className={`table-grid-container ${gridThemeClass}`}>
               <AgGridReact
                 rowData={tableData2}
                 columnDefs={tableCols2}
@@ -496,7 +521,7 @@ function App() {
         </div>
         
         {/* Bottom data grid - Original full-width grid */}
-        <div className="data-grid-container ag-theme-alpine">
+        <div className={`data-grid-container ${gridThemeClass}`}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}

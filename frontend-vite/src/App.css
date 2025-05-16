@@ -4,14 +4,16 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .header {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-buttons {
@@ -39,13 +41,13 @@
 }
 
 .status-success {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
 .status-error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--error-bg);
+  color: var(--error-text);
 }
 
 .main-container {
@@ -68,16 +70,16 @@
 .tables-container {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   padding: 10px;
-  background-color: #ffffff;
+  background-color: var(--bg-color);
 }
 
 .tables-container h4 {
   margin-top: 5px;
   margin-bottom: 5px;
-  color: #333;
+  color: var(--text-color);
   font-weight: 600;
 }
 
@@ -95,8 +97,8 @@
   margin-bottom: 20px;
   padding: 10px;
   border-radius: 5px;
-  background-color: #ffffff;
-  border: 1px solid #e9ecef;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
 }
 
 .chat-input-container {
@@ -107,23 +109,25 @@
 .chat-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .send-button {
   margin-left: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-button-bg);
+  color: var(--primary-button-text);
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .send-button:hover {
-  background-color: #0069d9;
+  background-color: var(--primary-button-hover);
 }
 
 /* Table grid container for the tables in the left column */
@@ -132,7 +136,7 @@
   max-height: 300px;
   width: 100%;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
 }
 
 /* Make sure the grid takes up the full height of its container */
@@ -150,13 +154,6 @@
 /* AG Grid specific styles */
 .ag-theme-alpine {
   --ag-header-height: 30px;
-  --ag-header-foreground-color: #000;
-  --ag-header-background-color: #f8f9fa;
-  --ag-header-cell-hover-background-color: #e9ecef;
-  --ag-header-column-separator-display: block;
-  --ag-header-column-separator-height: 50%;
-  --ag-header-column-separator-width: 1px;
-  --ag-header-column-separator-color: #dde2eb;
 }
 
 /* Chat message styling */
@@ -170,14 +167,14 @@
 .user-message {
   margin-left: auto;
   margin-right: 0;
-  background-color: #e6f7ff;
+  background-color: var(--user-message-bg);
   border-radius: 15px 15px 0 15px;
 }
 
 .assistant-message {
   margin-right: auto;
   margin-left: 0;
-  background-color: #f0f0f0;
+  background-color: var(--assistant-message-bg);
   border-radius: 15px 15px 15px 0;
 }
 
@@ -189,8 +186,8 @@
 
 /* SQL message styling */
 .sql-message {
-  background-color: #282c34;
-  color: #f8f8f2;
+  background-color: var(--sql-bg);
+  color: var(--sql-text);
   padding: 10px;
   border-radius: 5px;
   margin: 10px 0;
@@ -206,7 +203,7 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #4CAF50;
+  background-color: var(--execute-button-bg);
   color: white;
   border: none;
   border-radius: 4px;
@@ -217,7 +214,7 @@
 }
 
 .execute-sql-button:hover {
-  background-color: #45a049;
+  background-color: var(--execute-button-hover);
 }
 
 .execute-sql-button:disabled {
@@ -230,9 +227,9 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid rgba(128, 128, 128, 0.2);
   border-radius: 50%;
-  border-top-color: #007bff;
+  border-top-color: var(--primary-button-bg);
   animation: spin 1s ease-in-out infinite;
   margin-right: 10px;
 }

@@ -6,6 +6,52 @@
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
   font-weight: 400;
+  
+  /* Light theme variables (default) */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --header-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --user-message-bg: #e6f7ff;
+  --assistant-message-bg: #f0f0f0;
+  --primary-button-bg: #007bff;
+  --primary-button-hover: #0069d9;
+  --primary-button-text: white;
+  --success-bg: #d4edda;
+  --success-text: #155724;
+  --error-bg: #f8d7da;
+  --error-text: #721c24;
+  --grid-header-bg: #f8f9fa;
+  --grid-header-text: #000;
+  --sql-bg: #282c34;
+  --sql-text: #f8f8f2;
+  --execute-button-bg: #4CAF50;
+  --execute-button-hover: #45a049;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme variables */
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --header-bg: #1e1e1e;
+    --border-color: #333333;
+    --user-message-bg: #0d47a1;
+    --assistant-message-bg: #333333;
+    --primary-button-bg: #0d47a1;
+    --primary-button-hover: #1565c0;
+    --primary-button-text: white;
+    --success-bg: #1b5e20;
+    --success-text: #a5d6a7;
+    --error-bg: #b71c1c;
+    --error-text: #ef9a9a;
+    --grid-header-bg: #1e1e1e;
+    --grid-header-text: #e0e0e0;
+    --sql-bg: #1a1a1a;
+    --sql-text: #f8f8f2;
+    --execute-button-bg: #2e7d32;
+    --execute-button-hover: #388e3c;
+  }
 }
 
 body {
