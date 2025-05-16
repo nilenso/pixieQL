@@ -41,19 +41,19 @@ function App() {
   ]);
   
   const [tableCols1] = useState([
-    { field: 'player', sortable: true, filter: true, minWidth: 150 },
-    { field: 'team', sortable: true, filter: true, minWidth: 120 },
-    { field: 'runs', sortable: true, filter: true, minWidth: 120 },
-    { field: 'average', sortable: true, filter: true, minWidth: 120 },
-    { field: 'strike_rate', sortable: true, filter: true, minWidth: 120 },
+    { field: 'player', sortable: true, filter: true, minWidth: 150, headerTooltip: 'Player Name' },
+    { field: 'team', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Team Name' },
+    { field: 'runs', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Total Runs' },
+    { field: 'average', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Batting Average' },
+    { field: 'strike_rate', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Strike Rate' },
   ]);
   
   const [tableCols2] = useState([
-    { field: 'bowler', sortable: true, filter: true, minWidth: 150 },
-    { field: 'team', sortable: true, filter: true, minWidth: 120 },
-    { field: 'wickets', sortable: true, filter: true, minWidth: 120 },
-    { field: 'economy', sortable: true, filter: true, minWidth: 120 },
-    { field: 'average', sortable: true, filter: true, minWidth: 120 },
+    { field: 'bowler', sortable: true, filter: true, minWidth: 150, headerTooltip: 'Bowler Name' },
+    { field: 'team', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Team Name' },
+    { field: 'wickets', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Total Wickets' },
+    { field: 'economy', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Economy Rate' },
+    { field: 'average', sortable: true, filter: true, minWidth: 120, headerTooltip: 'Bowling Average' },
   ]);
 
   // Ref for chat display area to auto-scroll to bottom
@@ -108,7 +108,8 @@ function App() {
           const newColumnDefs = Object.keys(firstRow).map(key => ({
             field: key,
             sortable: true,
-            filter: true
+            filter: true,
+            headerTooltip: key
           }));
           
           // Update the grid data
@@ -374,7 +375,8 @@ function App() {
                 defaultColDef={{
                   flex: 1,
                   minWidth: 100,
-                  resizable: true
+                  resizable: true,
+                  tooltipShowDelay: 100
                 }}
                 onGridReady={(params) => {
                   params.api.sizeColumnsToFit();
@@ -397,7 +399,8 @@ function App() {
                 defaultColDef={{
                   flex: 1,
                   minWidth: 100,
-                  resizable: true
+                  resizable: true,
+                  tooltipShowDelay: 100
                 }}
                 onGridReady={(params) => {
                   params.api.sizeColumnsToFit();
@@ -506,7 +509,8 @@ function App() {
             defaultColDef={{
               flex: 1,
               minWidth: 100,
-              resizable: true
+              resizable: true,
+              tooltipShowDelay: 100
             }}
             onGridReady={(params) => {
               if (params.api && rowData.length > 0) {
