@@ -56,6 +56,39 @@
   overflow: hidden;
 }
 
+/* Top section with two columns */
+.top-section {
+  display: flex;
+  height: calc(100% - 370px); /* Leave space for the bottom grid */
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Left column - Tables container */
+.tables-container {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+.tables-container h4 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Right column - Chat section */
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .chat-display-area {
   flex: 1;
   overflow-y: auto;
@@ -93,10 +126,25 @@
   background-color: #0069d9;
 }
 
-.data-grid-container {
-  height: 250px;
-  margin-top: 20px;
+/* Table grid container for the tables in the left column */
+.table-grid-container {
+  min-height: 200px;
+  max-height: 300px;
   width: 100%;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+/* Make sure the grid takes up the full height of its container */
+.table-grid-container .ag-root-wrapper {
+  height: 100%;
+}
+
+/* Main data grid container at the bottom */
+.data-grid-container {
+  height: 350px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 /* AG Grid specific styles */
