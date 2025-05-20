@@ -17,6 +17,7 @@ https://docs.astral.sh/uv/getting-started/installation/
 For convenience, you can use the provided script to install dependencies and run both the backend and frontend in a single command:
 
 ```bash
+uv venv
 python run.py
 ```
 
